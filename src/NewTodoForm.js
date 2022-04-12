@@ -11,11 +11,11 @@ function NewTodoForm({ task, createTodo }) {
     }
   );
 
-  const handleChange = evt => {
+  const handleChange = (evt) => {
     setUserInput({ [evt.target.name]: evt.target.value });
   };
 
-  const handleSubmit = evt => {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
     const newTodo = { id: uuid(), task: userInput.task, completed: false };
     createTodo(newTodo);
@@ -33,7 +33,7 @@ function NewTodoForm({ task, createTodo }) {
         name="task"
         placeholder="New Todo"
       />
-      <button>Add Todo</button>
+      <button id="addButton">Add Todo</button>
     </form>
   );
 }

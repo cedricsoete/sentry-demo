@@ -25,9 +25,9 @@ function TodoList() {
 
     console.log(newTodo);
     setTodos([...todos, newTodo]);
-    span.setStatus("ok");
+    span.setStatus("internal_error");
     span.finish();
-    transaction.setStatus("ok").finish();
+    transaction.setStatus("internal_error").finish();
   };
 
   const remove = (id) => {
