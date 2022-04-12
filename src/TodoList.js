@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import * as Sentry from "@sentry/react";
+import { SpanStatusType } from "@sentry/tracing";
 import ReactDOM from "react-dom";
 import Todo from "./Todo";
 import NewTodoForm from "./NewTodoForm";
@@ -11,17 +13,29 @@ function TodoList() {
     { id: uuid(), task: "task 2", completed: true }
   ]);
 
-  const create = newTodo => {
+  const create = (newTodo) => {
+    const transaction = Sentry.startTransaction({ name: "create-item" });
+    const span = transaction.startChild({
+      op: "create",
+      description: "create item",
+      data: {
+        item: newTodo
+      }
+    });
+
     console.log(newTodo);
     setTodos([...todos, newTodo]);
+    span.setStatus("ok");
+    span.finish();
+    transaction.setStatus("ok").finish();
   };
 
-  const remove = id => {
-    setTodos(todos.filter(todo => todo.id !== id));
+  const remove = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   const update = (id, updtedTask) => {
-    const updatedTodos = todos.map(todo => {
+    const updatedTodos = todos.map((todo) => {
       if (todo.id === id) {
         return { ...todo, task: updtedTask };
       }
@@ -30,8 +44,8 @@ function TodoList() {
     setTodos(updatedTodos);
   };
 
-  const toggleComplete = id => {
-    const updatedTodos = todos.map(todo => {
+  const toggleComplete = (id) => {
+    const updatedTodos = todos.map((todo) => {
       if (todo.id === id) {
         return { ...todo, completed: !todo.completed };
       }
@@ -40,7 +54,7 @@ function TodoList() {
     setTodos(updatedTodos);
   };
 
-  const todosList = todos.map(todo => (
+  const todosList = todos.map((todo) => (
     <Todo
       toggleComplete={toggleComplete}
       update={update}
